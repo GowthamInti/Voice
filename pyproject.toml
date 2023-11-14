@@ -6,14 +6,20 @@ build-backend = "poetry.masonry.api"
 name = "backend"
 version = "0.1.0"
 description = "Minimal Poetry example with Docker Multi-Stage builds"
-authors = ["Michael Oliver <mo175@live.com>"]
+authors = ["Gowtham"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = ">=3.10,<3.12"
 
-fastapi = "0.52.0"
+fastapi = "^0.95.0"
+pydantic = "^1.10.7"
 gunicorn = "^20.0.4"
-uvicorn = "^0.11.3"
+uvicorn = "^0.21.1"
+torch = ">=2.0.0, !=2.0.1, !=2.1.0"
+fire = "^0.5.0"
+httpx = "^0.25.0"
+tts = "^0.20.2"
+
 
 
 [tool.poetry.dev-dependencies]

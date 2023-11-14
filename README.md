@@ -1,3 +1,9 @@
+
+## Our notes
+
+the app is designed to run and only one model at instantiation which is xtts_v2 this can be changed in the future to preload multiple models though.
+
+To run different models, run `python dev-run.py <MODEL INFO>`. the availble options is text2speech. Checkout the file for more info, and you can also run `--envkey=envvalue` to change environment variables
 # Poetry managed Python FastAPI application with Docker multi-stage builds
 
 ### This repo serves as a minimal reference on setting up docker multi-stage builds with poetry
@@ -54,21 +60,5 @@ Build images with:
         
         docker build --tag poetry-project --file docker/Dockerfile . 
 
-The Dockerfile uses multi-stage builds to run lint and test stages before building the production stage.  If linting or testing fails the build will fail.
-
-You can stop the build at specific stages with the `--target` option:
-
-        docker build --name poetry-project --file docker/Dockerfile . --target <stage>
-
-
-For example we wanted to stop at the **test** stage:
-
-        docker build --tag poetry-project --file docker/Dockerfile --target test .
-
-We could then get a shell inside the container with:
-
-        docker run -it poetry-project:latest bash
-
-If you do not specify a target the resulting image will be the last image defined which in our case is the 'production' image.
 
 
