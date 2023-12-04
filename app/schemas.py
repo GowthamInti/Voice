@@ -3,7 +3,9 @@ import requests
 
 from app.config import CONFIG
 from pydantic import BaseModel
+from app.models import load_pipeline
 text2speech_example = {
+    "model": "XTTS",
     "text": ("Hello, this is a test. I hope the TTS model can pronounce this correctly."),
 
     "speaker_wav_url":"http://65.21.65.49:8091/download/highpitch_fastspeed_highenergy.wav",
@@ -11,9 +13,10 @@ text2speech_example = {
 }
 
 class _Text2Speech(BaseModel):
+    model: str
     text: Union[str, List[str]]
     speaker_wav_url: Union[str, List[str]]
-    language:str
+    language: Optional[str]= None
     class Config:
         arbitrary_types_allowed = True
 
@@ -27,6 +30,7 @@ class Text2SpeechQuery(_Text2Speech):
 
         kwargs = self.dict(exclude_none=True) 
         url = kwargs['speaker_wav_url']
+        kwargs['model'] = load_pipeline(kwargs['model'])
         save_path ="assets/audio1.wav"
         output_path ="assets/output.wav"
         try:

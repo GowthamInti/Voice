@@ -4,7 +4,6 @@ from TTS.api import TTS
 from fastapi.exceptions import HTTPException
 from fastapi import status
 
-from app.config import PipelineConfig
 from app.utils import CUDA_IS_AVAILABLE,DEVICE
 from app.exceptions import (
     UnsupportedException,
@@ -13,17 +12,13 @@ from app.exceptions import (
     UnsupportedSchedulerException,
 )
 
-SUPPORTED_MODELS = ['tts_models/multilingual/multi-dataset/xtts_v2', 
-                    'tts_models/multilingual/multi-dataset/your_tts', 
-                    'tts_models/multilingual/multi-dataset/bark',
-                    'tts_models/en/vctk/vits',
-                    'tts_models/en/vctk/fast_pitch'
-                    ]
+SUPPORTED_MODELS = {'XTTS':'tts_models/multilingual/multi-dataset/xtts_v2',
+                    'XTTS_fastpitch': 'tts_models/en/ljspeech/fast_pitch',
+                    }
 
-def load_tts_pipeline(
-    name: str,
-    pipeline_name: str,
-):
+
+def load_tts_pipeline(name):
+
     if name not in SUPPORTED_MODELS:
         msg = (
             f"Model: {name}, is not supported."
@@ -31,17 +26,16 @@ def load_tts_pipeline(
         )
         logger.exception(msg)
         raise UnsupportedModelException(msg)
+    if name == "XTTS":
+        model = TTS( SUPPORTED_MODELS[name], progress_bar=False).to(DEVICE)
+    if name == "XTTS_fastpitch":
+        model = TTS( SUPPORTED_MODELS[name], progress_bar=False).to(DEVICE)
+    return model
 
-    tts = TTS(name).to(DEVICE)
-    return tts
-    
+def load_pipeline(model_name):
+    try: 
 
-def load_pipeline(config: PipelineConfig):
-    try:
-        pipe = load_tts_pipeline(
-                name=config.name,
-                pipeline_name=config.pipeline,
-        )
+        pipe = load_tts_pipeline(model_name)
     except UnsupportedException as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.args)
     except Exception as e:

@@ -17,28 +17,8 @@ logger = logging.getLogger(__file__)
 
 
 logger.info("App opened")
-SUPPORTED_PIPELINES = [
-    "TTS",
-]
 
-
-if CONFIG.pipeline.pipeline not in SUPPORTED_PIPELINES:
-    e = CONFIG.pipeline.pipeline
-    raise ValueError((f"Endpoint: {e}. Is not one of: {SUPPORTED_PIPELINES}"))
-
-
-pipeline = []
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    if CONFIG.pipeline.pipeline == "TTS":
-        logger.info("loading training params")
-        pipeline.append(load_pipeline(CONFIG.pipeline))
-    yield
-    pipeline[0].to("cpu")
-
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -51,7 +31,8 @@ app.add_middleware(
 @app.post("/text2speech",response_class=FileResponse(str, media_type="audio/wav"))
 async def text2speech(q: Text2SpeechQuery):
     data_dict = q.to_inference_kwargs()
-    pipeline[0].tts_to_file(**data_dict)
+    model = data_dict.pop('model')
+    model.tts_to_file(**data_dict)
     return FileResponse(data_dict['file_path'], media_type="audio/wav")
 
 

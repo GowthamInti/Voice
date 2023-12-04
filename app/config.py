@@ -2,12 +2,12 @@ from typing import List, Optional
 
 from pydantic import BaseModel, BaseSettings
 
-class PipelineConfig(BaseModel):
-    name: str = "tts_models/en/vctk/vits"
-    pipeline: str = "TTS"
+# class PipelineConfig(BaseModel):
+#     name: str = "tts_models/en/vctk/vits"
+#     pipeline: str = "TTS"
 
 class Config(BaseSettings):
-    pipeline: PipelineConfig = PipelineConfig()
+    # pipeline: PipelineConfig = PipelineConfig()
     AIP_HEALTH_ROUTE: str = "/health"
     AIP_HTTP_PORT: int = 8000
     DEBUG: bool = False
